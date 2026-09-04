@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ exam.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ exam.title }}</h1>
+<p class="meta">Created: {{ exam.created_at|date:"M d, Y H:i" }}</p>
+{% if exam.description %}
+<p>{{ exam.description }}</p>
+{% endif %}
+
+<h2>Questions ({{ questions.count }})</h2>
+
+{% for question in questions %}
+<div class="card question-block">
+    <h3>Q{{ forloop.counter }}: {{ question.text }}</h3>
+    {% for choice in question.choices.all %}
+    <p class="choice-item {% if choice.is_correct %}correct{% endif %}">
+        {{ forloop.counter }}. {{ choice.text }}
+        {% if choice.is_correct %} - Correct{% endif %}
+    </p>
+    {% empty %}
+    <p style="color:#95a5a6">No options yet.</p>
+    {% endfor %}
+</div>
+{% empty %}
+<p>No questions in this exam yet.</p>
+{% endfor %}
+
+<br>
+<a href="{% url 'quiz:question_add' exam.pk %}" class="btn btn-success">Add Question</a>
+{% endblock %}
