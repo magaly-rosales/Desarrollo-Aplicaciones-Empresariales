@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda - Nuevo Producto</title>
+    <link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="/" class="logo">Sesion<span>2</span></a>
+            <nav>
+                <a href="/">Inicio</a>
+                <a href="/tienda/">Productos</a>
+                <a href="/tienda/crear/">Agregar Producto</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Nuevo <span class="highlight">Producto</span></h1>
+        </div>
+    </section>
+    
+    <section class="container" style="padding: 40px 20px; max-width: 500px;">
+    <style>
+        .form-tienda p {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-tienda label {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-tienda input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+    </style>
+    <form method="post" class="form-tienda">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Guardar producto</button>
+    </form>
+    </section>
+</body>
+</html>
