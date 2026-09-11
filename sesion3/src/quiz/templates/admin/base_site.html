@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block usertools %}
+<div class="admin-usertools" style="
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 12px 24px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E4E4E0;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+">
+    {% if has_permission %}
+    <span style="font-weight: 500; color: #3B5BA5;">{% trans 'WELCOME' %}, <strong>{{ user.username|capfirst }}</strong>.</span>
+    {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}" style="color: #3B5BA5; text-decoration: none;">{% trans 'CHANGE PASSWORD' %}</a>
+    {% endif %}
+    <form id="logout-form" method="post" action="{% url 'admin:logout' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" style="background: none; border: none; color: #3B5BA5; text-decoration: none; cursor: pointer; font: inherit; letter-spacing: 0.3px; padding: 0;">{% trans 'LOG OUT' %}</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Exams{% endblock %}
+
+{% block content %}
+<h1>Exams</h1>
+{% if exams %}
+    {% for exam in exams %}
+    <div class="card exam-card">
+        <div>
+            <h2>{{ exam.title }}</h2>
+            <p class="meta">Created: {{ exam.created_at|date:"M d, Y H:i" }}</p>
+            {% if exam.description %}
+            <p>{{ exam.description }}</p>
+            {% endif %}
+        </div>
+        <div class="exam-card-footer">
+            <a href="{% url 'quiz:exam_detail' exam.pk %}" class="btn btn-sm">Ver examen &rarr;</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No exams available.</p>
+{% endif %}
+{% endblock %}

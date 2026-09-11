@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ exam.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ exam.title }}</h1>
+<p class="meta">Created: {{ exam.created_at|date:"M d, Y H:i" }}</p>
+{% if exam.description %}
+<p>{{ exam.description }}</p>
+{% endif %}
+
+<br>
+<h2>Questions ({{ questions.count }})</h2>
+<br>
+
+{% for question in questions %}
+<div class="question-block">
+    <p class="question-label">P{{ forloop.counter }}</p>
+    <p style="margin-bottom: 12px; font-size: 15px;">{{ question.text }}</p>
+    {% for choice in question.choices.all %}
+    <p class="choice-item">{{ forloop.counter }}. {{ choice.text }}</p>
+    {% empty %}
+    <p style="color:#8B919A; font-style: italic;">No options yet.</p>
+    {% endfor %}
+</div>
+{% empty %}
+<p>No questions in this exam yet.</p>
+{% endfor %}
+
+<div class="add-question-area">
+    <a href="{% url 'quiz:question_add' exam.pk %}" class="btn">+ Agregar pregunta</a>
+</div>
+{% endblock %}

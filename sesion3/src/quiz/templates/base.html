@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quiz App{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #F7F7F5; color: #1E2430; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 30px 24px; }
+
+        /* Nav */
+        .nav { display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border-bottom: 1px solid #E4E4E0; padding: 0 24px; height: 56px; position: sticky; top: 0; z-index: 10; }
+        .nav-brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; color: #3B5BA5; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a { display: inline-flex; align-items: center; padding: 6px 14px; font-size: 14px; font-weight: 500; color: #1E2430; text-decoration: none; border-radius: 4px; background: transparent; transition: background 0.15s, color 0.15s; }
+        .nav-links a:hover { background: #3B5BA5; color: #FFFFFF; }
+        .nav-links a.active { background: #3B5BA5; color: #FFFFFF; }
+
+        /* Typography */
+        h1 { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 24px; color: #1E2430; margin-bottom: 8px; }
+        h2 { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 20px; color: #1E2430; margin-bottom: 8px; }
+        h3 { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 16px; color: #1E2430; margin-bottom: 8px; }
+        p { margin-bottom: 12px; }
+
+        /* Cards */
+        .card { background: #FFFFFF; border: 1px solid #E4E4E0; border-radius: 6px; padding: 24px; margin-bottom: 16px; }
+        .card p { margin-bottom: 16px; }
+
+        /* Meta */
+        .meta { font-size: 13px; color: #8B919A; margin-bottom: 12px; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; padding: 8px 20px; font-size: 14px; font-weight: 500; color: #FFFFFF; background: #3B5BA5; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+        .btn:hover { background: #2E4A8A; color: #FFFFFF; text-decoration: none; }
+        .btn-success { background: #3B5BA5; }
+        .btn-success:hover { background: #2E4A8A; }
+        .btn-outline { background: transparent; color: #3B5BA5; border: 1px solid #E4E4E0; }
+        .btn-outline:hover { background: #F7F7F5; }
+        .btn-sm { padding: 5px 12px; font-size: 13px; }
+
+        /* Question block */
+        .question-block { border-left: 3px solid #3B5BA5; padding: 24px; background: #FFFFFF; border: 1px solid #E4E4E0; border-radius: 6px; border-left: 3px solid #3B5BA5; margin-bottom: 16px; }
+        .question-label { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; color: #3B5BA5; margin-bottom: 4px; }
+
+        /* Choices */
+        .choice-item { padding: 10px 14px; margin-bottom: 6px; border: 1px solid transparent; border-radius: 4px; transition: background 0.15s; font-size: 15px; }
+        .choice-item:hover { background: #F7F7F5; border-color: #E4E4E0; }
+
+        /* Form elements */
+        .errorlist { color: #C0392B; list-style: none; margin-bottom: 16px; font-size: 14px; }
+        .form-row { margin-bottom: 16px; }
+        .form-row label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #1E2430; }
+        .form-row input[type="text"], .form-row textarea { width: 100%; padding: 10px 12px; border: 1px solid #E4E4E0; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 14px; color: #1E2430; transition: border-color 0.15s; }
+        .form-row input[type="text"]:focus, .form-row textarea:focus { outline: none; border-color: #3B5BA5; }
+        .form-row textarea { height: 100px; resize: vertical; }
+
+        /* Inline form (choice formset) */
+        .inline-form table { width: 100%; border-collapse: collapse; }
+        .inline-form td { padding: 4px 8px; }
+
+        /* Add question area */
+        .add-question-area { margin-top: 24px; padding-top: 20px; border-top: 1px solid #E4E4E0; }
+
+        /* Exam list grid */
+        .exam-card { display: flex; flex-direction: column; justify-content: space-between; }
+        .exam-card-footer { margin-top: 20px; text-align: right; }
+
+        /* Checkbox styling */
+        input[type="checkbox"] { margin-right: 6px; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="{% url 'quiz:exam_list' %}" class="nav-brand">Quiz</a>
+        <div class="nav-links">
+            <a href="{% url 'quiz:exam_list' %}" class="{% if block.title == 'Exams' %}active{% endif %}">Exámenes</a>
+            <a href="/admin/login/">Iniciar sesión como administrador</a>
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
