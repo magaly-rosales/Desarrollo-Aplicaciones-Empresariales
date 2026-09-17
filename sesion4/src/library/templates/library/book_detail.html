@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.title }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            background: radial-gradient(circle at top, #3b1f14 0%, #1a0f0a 70%);
+            color: #e8d9c0;
+            margin: 0;
+            padding: 50px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .book {
+            max-width: 780px;
+            width: 100%;
+            background: #fbf3e2;
+            color: #2b1d12;
+            border-radius: 4px 12px 12px 4px;
+            box-shadow:
+                -14px 0 0 #7a1f1f,
+                -18px 4px 25px rgba(0,0,0,0.6),
+                0 20px 50px rgba(0,0,0,0.7);
+            position: relative;
+            padding: 55px 60px;
+            background-image:
+                repeating-linear-gradient(transparent 0 27px, rgba(122,31,31,0.05) 27px 28px);
+        }
+
+        .book::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 6px;
+            background: linear-gradient(to right, #000, transparent);
+            opacity: 0.25;
+        }
+
+        .spine-label {
+            position: absolute;
+            top: -14px;
+            left: 30px;
+            background: #7a1f1f;
+            color: #f4e3c1;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 3px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 2.6rem;
+            margin: 20px 0 4px;
+            color: #4a1010;
+            line-height: 1.1;
+        }
+
+        .ornament {
+            text-align: center;
+            color: #7a1f1f;
+            font-size: 1.4rem;
+            margin: 18px 0;
+            letter-spacing: 12px;
+        }
+
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #7a1f1f;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 34px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(122,31,31,0.35);
+            padding-bottom: 6px;
+        }
+
+        .author-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2b1d12;
+        }
+
+        .nationality {
+            font-style: italic;
+            color: #6b5638;
+        }
+
+        .bio, .summary {
+            line-height: 1.65;
+            color: #3a2a18;
+            font-size: 1.5rem;
+        }
+
+        .summary {
+            font-style: italic;
+        }
+
+        .summary::before { content: "“"; }
+        .summary::after { content: "”"; }
+
+        .tags {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tags li {
+            background: #7a1f1f;
+            color: #f4e3c1;
+            padding: 5px 16px;
+            border-radius: 2px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .publisher-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .publisher-list li {
+            border-left: 3px solid #7a1f1f;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+            background: rgba(122,31,31,0.06);
+            font-size: 1.5rem;
+        }
+
+        .publisher-list li strong {
+            color: #4a1010;
+        }
+
+        .cover {
+            float: right;
+            max-width: 160px;
+            margin: 0 0 15px 20px;
+            border: 4px solid #fbf3e2;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .footer-mark {
+            text-align: center;
+            margin-top: 40px;
+            color: #a08a63;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .back-link:hover {
+    text-decoration: underline;
+}
+        .back-link {
+    max-width: 780px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 18px;
+    color: #7a1f1f;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+}
+    </style>
+</head>
+<body>
+    <div class="book">
+        <div class="spine-label">Biblioteca</div>
+
+        {% if book.cover %}
+            <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="cover">
+        {% endif %}
+
+        <h1>{{ book.title }}</h1>
+        <div class="ornament">❦</div>
+
+        {% if book.summary %}
+            <p class="summary">{{ book.summary }}</p>
+        {% endif %}
+
+        <h3>Autor</h3>
+        <p class="author-name">
+            {{ book.author.first_name }} {{ book.author.last_name }}
+            <span class="nationality">— {{ book.author.nationality }}</span>
+        </p>
+        {% if book.author.profile %}
+            <p class="bio">{{ book.author.profile.biography }}</p>
+        {% endif %}
+
+        <h3>Categorías</h3>
+        <ul class="tags">
+            {% for category in book.categories.all %}
+                <li>{{ category.name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Editorial(es)</h3>
+        <ul class="publisher-list">
+            {% for pub in book.publication_set.all %}
+                <li><strong>{{ pub.publisher.name }}</strong> — {{ pub.edition }} ({{ pub.publication_date }})</li>
+            {% endfor %}
+        </ul>
+
+        <div class="footer-mark">◆ Ficha bibliográfica ◆</div>
+    <a href="{% url 'library:book_list' %}" class="back-link">&larr; Volver al catálogo</a>
+    </div>
+
+
+    
+</body>
+</html>

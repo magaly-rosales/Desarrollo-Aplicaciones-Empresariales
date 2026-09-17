@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de libros</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            background: #f4ecd8;
+            background-image:
+                radial-gradient(circle at 20% 10%, rgba(122,31,31,0.05), transparent 40%),
+                radial-gradient(circle at 80% 90%, rgba(122,31,31,0.06), transparent 40%);
+            color: #2b1d12;
+            min-height: 100vh;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: #fbf3e2;
+            border-bottom: 3px solid #7a1f1f;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        nav .brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.6rem;
+            color: #7a1f1f;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav .links {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        nav .links a {
+            text-decoration: none;
+            color: #4a3a24;
+            font-size: 1.15rem;
+            padding: 10px 18px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        nav .links a:hover {
+            background: rgba(122,31,31,0.1);
+        }
+
+        nav .admin-btn {
+            background: #7a1f1f;
+            color: #fbf3e2 !important;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+            border: 2px solid #4a1010;
+        }
+
+        nav .admin-btn:hover {
+            background: #942828;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 30px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 2.8rem;
+            color: #4a1010;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6b5638;
+            font-style: italic;
+            font-size: 1.15rem;
+            margin-bottom: 35px;
+        }
+
+        .shelf {
+            display: grid;
+            gap: 14px;
+        }
+
+        .book-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: #fbf3e2;
+            border-left: 5px solid #7a1f1f;
+            border-radius: 6px;
+            padding: 18px 24px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+        }
+
+        .book-card:hover {
+            transform: translateX(6px);
+            background: #f0e2c4;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+
+        .book-icon {
+            font-size: 2.1rem;
+        }
+
+        .book-info .title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.35rem;
+            color: #2b1d12;
+        }
+
+        .book-info .author {
+            font-size: 1.1rem;
+            color: #6b5638;
+            font-style: italic;
+        }
+
+        .empty {
+            color: #6b5638;
+            font-style: italic;
+            padding: 30px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'library:book_list' %}" class="brand">Biblioteca Digital</a>
+        <div class="links">
+            <a href="{% url 'library:book_list' %}">Catálogo</a>
+            <a href="/admin/" class="admin-btn">Iniciar sesión como administrador</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Catálogo de libros</h1>
+        <p class="subtitle">Explora la colección disponible en la biblioteca</p>
+
+        <div class="shelf">
+            {% for book in books %}
+                <a href="{% url 'library:book_detail' book.pk %}" class="book-card">
+                    
+                    <div class="book-info">
+                        <div class="title">{{ book.title }}</div>
+                        <div class="author">{{ book.author }}</div>
+                    </div>
+                </a>
+            {% empty %}
+                <p class="empty">Todavía no hay libros registrados.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
