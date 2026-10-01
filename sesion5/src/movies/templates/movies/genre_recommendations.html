@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mejor valoradas de {{ genre.name }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #15171c;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(229,9,20,0.08), transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(229,9,20,0.08), transparent 40%);
+            color: #f2f2f2;
+            min-height: 100vh;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: #1c1f26;
+            border-bottom: 3px solid #e50914;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        nav .brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            color: #e50914;
+            text-decoration: none;
+        }
+
+        nav .links {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        nav .links a {
+            text-decoration: none;
+            color: #f2f2f2;
+            font-size: 1.05rem;
+            padding: 9px 16px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        nav .links a:hover {
+            background: rgba(229,9,20,0.15);
+        }
+
+        nav .admin-btn {
+            background: #e50914;
+            color: #fff !important;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        nav .admin-btn:hover {
+            background: #ff1a25;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 30px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #e50914;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.6rem;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .subtitle {
+            color: #9a9ca3;
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+        }
+
+        .ranking {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .movie-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: linear-gradient(145deg, #23262e, #1a1c22);
+            border: 1px solid #2d3038;
+            border-left: 5px solid #e50914;
+            border-radius: 8px;
+            padding: 16px 22px;
+        }
+
+        .rank-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            color: #e50914;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .movie-info {
+            flex: 1;
+        }
+
+        .movie-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .movie-year {
+            color: #9a9ca3;
+            font-size: 0.95rem;
+        }
+
+        .score-badge {
+            background: #e50914;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .score-badge.none {
+            background: #3a3d45;
+            color: #9a9ca3;
+            font-size: 0.85rem;
+        }
+
+        .empty {
+            color: #9a9ca3;
+            font-style: italic;
+            padding: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'movies:genre_list' %}" class="brand">🎬 CineHub</a>
+        <div class="links">
+            <a href="{% url 'movies:genre_list' %}">Géneros</a>
+            <a href="/admin/" class="admin-btn">Iniciar sesión como administrador</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="{% url 'movies:genre_list' %}" class="back-link">&larr; Volver a géneros</a>
+        <h1 class="page-title">Mejor valoradas de {{ genre.name }}</h1>
+        <p class="subtitle">Ranking según el promedio de valoraciones de los usuarios</p>
+
+        <div class="ranking">
+            {% for movie in movies %}
+                <div class="movie-row">
+                    <div class="rank-number">{{ forloop.counter }}</div>
+                    <div class="movie-info">
+                        <div class="movie-title">{{ movie.title }}</div>
+                        <div class="movie-year">{{ movie.release_year }}</div>
+                    </div>
+                    {% if movie.avg_rating %}
+                        <div class="score-badge">★ {{ movie.avg_rating|floatformat:1 }}</div>
+                    {% else %}
+                        <div class="score-badge none">Sin valorar</div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="empty">No hay películas registradas en este género.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
