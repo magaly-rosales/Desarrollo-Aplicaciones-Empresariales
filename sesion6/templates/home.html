@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio | Portal de Noticias{% endblock %}
+
+{% block hero %}
+    <section class="hero">
+        <div class="hero-inner">
+            <h1>Lo último en noticias</h1>
+            <p>Mantente informado con lo más reciente de nuestra redacción.</p>
+        </div>
+    </section>
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title">Últimas noticias</h2>
+
+    <div class="cards">
+        {% for article in articles %}
+            {% include '_article_card.html' %}
+        {% empty %}
+            <p class="empty-state">Aún no hay noticias disponibles.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

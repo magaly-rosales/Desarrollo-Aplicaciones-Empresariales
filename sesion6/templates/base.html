@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Portal de Noticias{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="{% url 'home' %}">
+                <span class="brand-icon">📰</span> Portal de Noticias
+            </a>
+            <nav class="nav">
+                <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+                {% if user.is_authenticated and user.is_staff %}
+                    <a class="btn btn-accent" href="{% url 'admin:index' %}">Panel de administración</a>
+                    <form class="inline-form" method="post" action="{% url 'admin:logout' %}">
+                        {% csrf_token %}
+                        <button class="btn btn-outline" type="submit">Cerrar sesión</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-accent" href="{% url 'admin:login' %}">Iniciar sesión como administrador</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% block hero %}{% endblock %}
+
+    <div class="layout">
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <aside class="sidebar">
+            {% block sidebar %}
+                <section class="widget">
+                    <h2>Acerca de</h2>
+                    <p>Las noticias más recientes de nuestra redacción, organizadas por categorías.</p>
+                </section>
+                <section class="widget">
+                    <h2>Categorías</h2>
+                    <ul class="category-list">
+                        {% for category in sidebar_categories %}
+                            <li>
+                                <a href="{% url 'category_detail' category.slug %}">
+                                    {{ category.name }}
+                                    <span class="count">{{ category.total }}</span>
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="muted">Aún no hay categorías.</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            {% endblock %}
+        </aside>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; {% now "Y" %} Portal de Noticias · Proyecto con Django</p>
+    </footer>
+</body>
+</html>

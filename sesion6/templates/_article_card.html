@@ -1,0 +1,23 @@
+<article class="card">
+    <a class="card-image" href="{% url 'article_detail' article.pk %}">
+        {% if article.featured_image %}
+            <img src="{{ article.featured_image.url }}" alt="{{ article.title }}">
+        {% else %}
+            <div class="card-placeholder">📰</div>
+        {% endif %}
+    </a>
+    <div class="card-body">
+        <div class="badges">
+            {% for category in article.categories.all %}
+                <a class="badge" href="{% url 'category_detail' category.slug %}">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+        <h3><a href="{% url 'article_detail' article.pk %}">{{ article.title }}</a></h3>
+        <p class="card-summary">{{ article.summary|truncatechars:120 }}</p>
+        <div class="card-meta">
+            <span>✍️ {{ article.author.name }}</span>
+            <span>📅 {{ article.published_at|date:"j \d\e F, Y" }}</span>
+        </div>
+        <a class="read-more" href="{% url 'article_detail' article.pk %}">Leer más →</a>
+    </div>
+</article>

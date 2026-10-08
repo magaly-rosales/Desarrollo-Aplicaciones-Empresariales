@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} | Portal de Noticias{% endblock %}
+
+{% block content %}
+    <div class="category-banner">
+        <span class="badge badge-light">Categoría</span>
+        <h1>{{ category.name }}</h1>
+        <p>{{ articles|length }} noticia{{ articles|length|pluralize }} en esta categoría</p>
+    </div>
+
+    <div class="cards">
+        {% for article in articles %}
+            {% include '_article_card.html' %}
+        {% empty %}
+            <p class="empty-state">Aún no hay noticias en esta categoría.</p>
+        {% endfor %}
+    </div>
+
+    <p><a class="btn btn-primary" href="{% url 'home' %}">← Volver al inicio</a></p>
+{% endblock %}

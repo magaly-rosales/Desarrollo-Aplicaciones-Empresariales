@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} | Portal de Noticias{% endblock %}
+
+{% block content %}
+    <article class="detail">
+        {% if article.featured_image %}
+            <img class="detail-cover" src="{{ article.featured_image.url }}" alt="{{ article.title }}">
+        {% endif %}
+
+        <div class="detail-inner">
+            <div class="badges">
+                {% for category in article.categories.all %}
+                    <a class="badge" href="{% url 'category_detail' category.slug %}">{{ category.name }}</a>
+                {% endfor %}
+            </div>
+
+            <h1>{{ article.title }}</h1>
+            <p class="lead">{{ article.summary }}</p>
+
+            <div class="byline">
+                <span class="avatar">{{ article.author.name|slice:":1"|upper }}</span>
+                <div>
+                    <strong>{{ article.author.name }}</strong>
+                    <span>{{ article.published_at|date:"j \d\e F \d\e Y, H:i" }}</span>
+                </div>
+            </div>
+
+            <div class="detail-body">
+                {{ article.body|linebreaks }}
+            </div>
+
+            {% if article.author.bio %}
+                <div class="author-box">
+                    <span class="avatar avatar-lg">{{ article.author.name|slice:":1"|upper }}</span>
+                    <div>
+                        <h4>Sobre {{ article.author.name }}</h4>
+                        <p>{{ article.author.bio }}</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <a class="btn btn-primary" href="{% url 'home' %}">← Volver al inicio</a>
+        </div>
+    </article>
+{% endblock %}
