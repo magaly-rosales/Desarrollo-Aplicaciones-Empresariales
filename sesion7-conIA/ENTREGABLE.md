@@ -493,12 +493,12 @@ Listo: 4 autores, 15 artículos, 23 comentarios.
 | Duelo q5-q8 | Escribir consultas ORM para q5-q8 | Consultas correctas con `distinct=True` y `exclude()` | ✅ Aceptadas | q5 requirió 2 intentos (primero sin `distinct=True`). q8 requirió 2 intentos (primero con `posts__isnull=True`). |
 | Duelo vs IA | Ejecutar `duel --source ai` | 3/8 correctas y baratas | ✅ Analizado | La IA falló en 5 preguntas: q3, q4, q5, q6, q8. |
 | Corrección N+1 | Corregir `blog/queries.py` | Agregar `select_related("author")` y `prefetch_related("tags")` | ✅ Aceptada | El test pasó con 2 consultas en vez de 23. |
-| Agent intent 1-4 | Probar las 4 intenciones del README | 3 ok, 1 approval_required, 1 denied | ✅ Analizado | Resultados esperados: R0 pasan, R2 requiere aprobación, acciones no registradas son denegadas. |
+| Agent intent 1-4 | Probar las 4 intenciones del README | 2 ok, 1 approval_required, 1 denied | ✅ Analizado | Resultados esperados: R0 pasan, R2 requiere aprobación, acciones no registradas son denegadas. |
 | Verificador de seguridad | Demostrar `plan_hash` invalidación | Hash cambiado al insertar comentario entre plan y aprobación | ✅ Analizado | Demostró invalidación de aprobaciones cuando datos cambian. |
 | Análisis de errores IA | Clasificar los 5 errores de la IA | Tabla de errores con categorías y SQL generado | ✅ Aceptado | Clasificación: semántica ORM, N+1, SQL JOINs, schema, inversión lógica. |
 | Análisis de seguridad | Explicar mecanismos de `registry.py` | Funciones `execute()`, `_denied()`, `plan_hash()`, `ACTIONS` | ✅ Aceptado | Se citaron funciones reales y líneas exactas. |
 
-**Nota honesta sobre autoría:** Las consultas q1–q8 en `blog/duel/team.py` fueron escritas por OpenCode (la IA), no por la alumna Magaly Liz Rosales Porras. Este laboratorio fue diseñado para demostrar que un modelo de IA puede tener errores en consultas ORM avanzadas, y para comparar contra las respuestas de la IA se necesitaban respuestas correctas como referencia. En este caso, OpenCode proporcionó las respuestas correctas usadas como referencia en el duelo. La alumna participó analizando los resultados, clasificando los errores de la IA y escribiendo las conclusiones.
+Las consultas q1–q8 del duelo y el borrador de este informe, incluidas las conclusiones, los generó OpenCode a petición de la alumna. El laboratorio pedía resolver las preguntas 1 a 4 sin IA; esto no se cumplió. La alumna revisó los resultados y los verificó con el duelo.
 
 ---
 
@@ -535,9 +535,8 @@ En resumen, un modelo de IA debe tratarse siempre como una fuente de texto no co
 | Paso 8 | Informe final | ✅ Este documento |
 
 **Estadísticas totales:**
-- **16 intentos de consulta** en el duelo humano
+- **10 intentos de consulta** en el duelo humano
 - **8 de 8 correctas** (100%)
-- **12 consultas SQL totales** (todas de 1 consulta cada una)
 - **5 errores clasificados** de la IA
 - **23 → 2 consultas** en la vista principal (optimización N+1)
 - **4 intenciones del agent** ejecutadas exitosamente
