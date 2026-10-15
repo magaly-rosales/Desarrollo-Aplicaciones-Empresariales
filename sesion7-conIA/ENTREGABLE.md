@@ -215,21 +215,21 @@ def q8():
 
 ### Errores lógicos / semánticos
 
-**1. q3 — Confunde inclusivo vs exclusivo:** Usa `__gt`/`__lt` en vez de `__gte`/`__lte`. La IA no reconoce que "entre X y Y" en español implica límites inclusivos. SQL de la IA: `WHERE published_at > 2026-03-01 AND published_at < 2026-05-31`. Resultado IA: 7 artículos. Resultado correcto: 9 artículos.
+**1. q3 — Resultado distinto por un borde:** Usa `__gt`/`__lt` en vez de `__gte`/`__lte`. La IA no reconoce que "entre X y Y" en español implica límites inclusivos. SQL de la IA: `WHERE published_at > 2026-03-01 AND published_at < 2026-05-31`. Resultado IA: 7 artículos. Resultado correcto: 9 artículos.
 
-**2. q8 — Inversión de lógica:** Usa `filter(posts__published=False)` que devuelve autores que TIENEN borradores, en vez de `exclude(posts__published=True)` que devuelve autores sin artículos publicados. Resultado IA: ['Ana Quispe', 'Carla Rojas', 'Carla Rojas', 'Carla Rojas'] (duplicado por los 3 borradores de Carla, y le falta Diego Pinto). Resultado correcto: ['Carla Rojas', 'Diego Pinto'].
+**2. q8 — Resultado distinto por el significado de la pregunta:** Usa `filter(posts__published=False)` que devuelve autores que TIENEN borradores, en vez de `exclude(posts__published=True)` que devuelve autores sin artículos publicados. Resultado IA: ['Ana Quispe', 'Carla Rojas', 'Carla Rojas', 'Carla Rojas'] (duplicado por los 3 borradores de Carla, y le falta Diego Pinto). Resultado correcto: ['Carla Rojas', 'Diego Pinto'].
 
 ### Error de performance
 
-**3. q4 — N+1 query:** Genera un loop en Python `[post for post in Post.objects.all() if post.comments.count() > 2]` que ejecuta 16 consultas (1 para obtener todos los posts + 15 para contar comentarios de cada uno). La solución correcta usa `annotate(...).filter(...)` en 1 sola consulta con GROUP BY / HAVING.
+**3. q4 — Correcta pero cara:** Genera un loop en Python `[post for post in Post.objects.all() if post.comments.count() > 2]` que ejecuta 16 consultas (1 para obtener todos los posts + 15 para contar comentarios de cada uno). La solución correcta usa `annotate(...).filter(...)` en 1 sola consulta con GROUP BY / HAVING.
 
 ### Error de SQL
 
-**4. q5 — COUNT con múltiples JOINs sin DISTINCT:** Al hacer `annotate(n_comments=Count("comments"), n_tags=Count("tags"))` sin `distinct=True`, Django genera un GROUP BY que cruza filas de ambas tablas intermedias. Si un post tiene 6 comentarios y 3 tags, el JOIN produce 18 filas y Count cuenta 18 en vez de 6. La solución usa `distinct=True` que genera `COUNT(DISTINCT column)`.
+**4. q5 — Conteos multiplicados:** Al hacer `annotate(n_comments=Count("comments"), n_tags=Count("tags"))` sin `distinct=True`, Django genera un GROUP BY que cruza filas de ambas tablas intermedias. Si un post tiene 6 comentarios y 3 tags, el JOIN produce 18 filas y Count cuenta 18 en vez de 6. La solución usa `distinct=True` que genera `COUNT(DISTINCT column)`.
 
 ### Error de schema
 
-**5. q6 — Join a campo inexistente:** Intenta hacer `author__country` cuando `country` está en `Profile`, no en `Author`. Error Django: `FieldError: Unsupported lookup 'country' for ForeignKey or join on the field not permitted`.
+**5. q6 — Campo inventado:** Intenta hacer `author__country` cuando `country` está en `Profile`, no en `Author`. Error Django: `FieldError: Unsupported lookup 'country' for ForeignKey or join on the field not permitted`.
 
 ---
 
@@ -273,6 +273,10 @@ Total: 1 + 11 + 11 = 23. Cada post publicado genera 2 consultas adicionales. Con
 test_front_page_runs_two_queries ... ok
 test_front_page_shows_the_published_posts ... ok
 ```
+
+Al ejecutar `python manage.py test` (24 pruebas) falla únicamente `test_the_starter_has_nothing_written`, que verifica que `team.py` del proyecto inicial esté vacío. Falla porque las ocho respuestas ya fueron escritas; es el comportamiento esperado. La prueba `test_front_page_runs_two_queries` pasa con 2 consultas.
+
+Se añadió CSS en `front_page.html` solo con fines visuales; no se modificó la lógica ni el HTML.
 
 ---
 
