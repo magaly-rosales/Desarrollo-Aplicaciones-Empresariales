@@ -99,3 +99,60 @@ Salida: 15 tests, todos OK, 0.353s
 - `"DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination"` - paginación por número de página
 - `"PAGE_SIZE": 5` - 5 resultados por página
 - `"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"` - genera esquema OpenAPI automáticamente
+
+## Paso 3 - Serializadores (quiz/serializers.py)
+
+### ChoiceSerializer
+Modelo: `Choice`
+Campos expuestos:
+- `id` - entero, auto-generado
+- `text` - string, máx 200 caracteres
+- `is_correct` - booleano, indica si es la respuesta correcta
+
+### ExamSerializer
+Modelo: `Exam`
+Campos expuestos:
+- `id` - entero, auto-generado
+- `title` - string, máx 120 caracteres (write + read)
+- `created_at` - fecha/hora, **solo lectura** (auto-generado al crear)
+- `question_count` - entero, **solo lectura** (calculado via annotate en el queryset)
+
+### QuestionSerializer
+Modelo: `Question`
+Campos expuestos:
+- `id` - entero, auto-generado
+- `exam` - entero (ID del examen), **write + read** (enviado como identificador, no como objeto anidado)
+- `text` - string libre (write + read)
+- `choices` - array de ChoiceSerializer, **anidado** (write + read)
+- `created_at` - fecha/hora, **solo lectura**
+
+## Paso 4 - Decisión de relaciones: exam como ID, choices anidados
+
+### Opciones viajando ANIDADAS dentro de la pregunta
+En `QuestionSerializer`, los choices se serializan como un array anidado (`ChoiceSerializer(many=True)`). Esto se hace porque:
+- Las opciones dependen semánticamente de una pregunta; no tienen existencia independiente en el dominio del cuestionario.
+- Al crear/modificar una pregunta, es natural enviar todas sus opciones en un solo request.
+- `create()` y `update()` manejan la lógica de crear/borrar las opciones en transacción atómica.
+
+### Examen viaja como IDENTIFICADOR
+El campo `exam` se envía como un entero (ID del examen), NO como un objeto Exam anidado. Esto se hace porque:
+- La relación es ForeignKey; lo que importa es identificar a qué examen pertenece la pregunta.
+- El examen ya existe (se crea por separado). No tiene sentido clonar el objeto exam dentro de la pregunta.
+- Simplifica el contrato de la API: solo se necesita el ID del examen existente.
+
+## Paso 5 - Validación propia: opción correcta
+
+La validación propia se implementa en `QuestionSerializer.validate_choices()`:
+
+```python
+def validate_choices(self, value):
+    if len(value) < 2:
+        raise serializers.ValidationError("Una pregunta necesita al menos dos opciones.")
+    if sum(1 for choice in value if choice.get("is_correct")) != 1:
+        raise serializers.ValidationError("Debe haber exactamente una opción correcta.")
+    return value
+```
+
+Reglas:
+1. **Mínimo 2 opciones**: si se envían menos de 2 choices, se rechaza con "Una pregunta necesita al menos dos opciones."
+2. **Exactamente 1 correcta**: se cuenta cuántos choices tienen `is_correct=True`; debe ser exactamente 1. Si hay 0 o más de 1, se rechaza con "Debe haber exactamente una opción correcta."
