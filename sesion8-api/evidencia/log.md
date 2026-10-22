@@ -157,6 +157,68 @@ Reglas:
 1. **Mínimo 2 opciones**: si se envían menos de 2 choices, se rechaza con "Una pregunta necesita al menos dos opciones."
 2. **Exactamente 1 correcta**: se cuenta cuántos choices tienen `is_correct=True`; debe ser exactamente 1. Si hay 0 o más de 1, se rechaza con "Debe haber exactamente una opción correcta."
 
+## Paso 7 - API Navegable y Cambio Mínimo
+
+### Problema identificado
+Con SOLO `TokenAuthentication`, al acceder al API desde un navegador (sin token), se recibe:
+- `GET /api/` → **401 Unauthorized** con mensaje "Las credenciales de autenticación no se proveyeron."
+- No se puede ver la API navegable (HTML interactivo).
+
+### Cambio mínimo aplicado
+
+**1. config/settings.py** - Agregué `SessionAuthentication` y `BasicAuthentication`:
+```python
+"DEFAULT_AUTHENTICATION_CLASSES": [
+    "rest_framework.authentication.TokenAuthentication",  # sigue funcionando para API programática
+    "rest_framework.authentication.SessionAuthentication", # permite login en navegador
+    "rest_framework.authentication.BasicAuthentication",   # permite basic auth para browsable API
+],
+```
+
+**2. config/settings.py** - Agregué configuración de templates (necesaria para browsable API):
+```python
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+            ],
+        },
+    },
+]
+```
+
+**3. config/urls.py** - Agregué rutas de autenticación de DRF:
+```python
+path("api-auth/", include("rest_framework.urls")),
+```
+
+### Impacto
+- `TokenAuthentication` sigue funcionando igual para acceso programático.
+- El navegador ahora puede ver la API navegable (200 OK con HTML).
+- Se puede hacer login en `/api-auth/` para probar operaciones desde el navegador.
+- Las pruebas existentes (`test_api`) siguen pasando.
+
+### Las cinco operaciones sobre preguntas
+
+| Operación | Método | Ruta | Cuerpo | Estado |
+|-----------|--------|------|--------|--------|
+| Listar | GET | `/api/questions/` | - | **200** |
+| Detalle | GET | `/api/questions/{id}/` | - | **200** |
+| Crear | POST | `/api/questions/` | `{"exam": 1, "text": "...", "choices": [...]}` | **201** |
+| Modificar parcial | PATCH | `/api/questions/{id}/` | `{"text": "nuevo texto"}` | **200** |
+| Eliminar | DELETE | `/api/questions/{id}/` | - | **204** |
+
+Evidencia real (tokens de `seed_quiz`):
+- GET list: 200 (count=8, 5 por página)
+- GET detalle: 200 (muestra text, exam, choices)
+- POST crear: 201 (devuelve objeto creado con ID)
+- PATCH modificar: 200 (text actualizado)
+- DELETE eliminar: 204 (sin cuerpo; GET posterior devuelve 404)
+
 ## Paso 6 - ViewSets y Enrutador
 
 ### ExamViewSet (quiz/views.py)
