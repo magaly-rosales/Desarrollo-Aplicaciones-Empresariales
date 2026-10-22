@@ -156,3 +156,60 @@ def validate_choices(self, value):
 Reglas:
 1. **Mínimo 2 opciones**: si se envían menos de 2 choices, se rechaza con "Una pregunta necesita al menos dos opciones."
 2. **Exactamente 1 correcta**: se cuenta cuántos choices tienen `is_correct=True`; debe ser exactamente 1. Si hay 0 o más de 1, se rechaza con "Debe haber exactamente una opción correcta."
+
+## Paso 6 - ViewSets y Enrutador
+
+### ExamViewSet (quiz/views.py)
+- Hereda de `viewsets.ModelViewSet` (CRUD completo: list, create, retrieve, update, partial_update, destroy)
+- `serializer_class = ExamSerializer`
+- `queryset = Exam.objects.annotate(question_count=Count("questions")).order_by("id")`
+  - Anota cada examen con el conteo de preguntas usando `Count("questions")`
+  - Ordenado por ID ascendente
+
+### QuestionViewSet (quiz/views.py)
+- Hereda de `viewsets.ModelViewSet` (CRUD completo)
+- `serializer_class = QuestionSerializer`
+- `filter_backends = [filters.SearchFilter]` - habilita búsqueda por texto
+- `search_fields = ["text"]` - busca en el campo text de la pregunta
+- `get_queryset()`: filtra por `exam` si se pasa `?exam=N` como query param
+  - Usa `select_related("exam")` para optimizar la carga del examen
+  - Usa `prefetch_related("choices")` para optimizar la carga de las opciones
+
+### DefaultRouter (quiz/urls.py)
+Registra 2 recursos:
+```python
+router.register("exams", ExamViewSet, basename="exam")
+router.register("questions", QuestionViewSet, basename="question")
+```
+
+### Rutas generadas
+
+**exams:**
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | /api/exams/ | listar |
+| POST | /api/exams/ | crear |
+| GET | /api/exams/{id}/ | detalle |
+| PUT | /api/exams/{id}/ | reemplazar |
+| PATCH | /api/exams/{id}/ | parcial |
+| DELETE | /api/exams/{id}/ | eliminar |
+
+**questions:**
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | /api/questions/ | listar |
+| POST | /api/questions/ | crear |
+| GET | /api/questions/{id}/ | detalle |
+| PUT | /api/questions/{id}/ | reemplazar |
+| PATCH | /api/questions/{id}/ | parcial |
+| DELETE | /api/questions/{id}/ | eliminar |
+
+Además de parámetros de consulta:
+- `?search=<texto>` - búsqueda en el campo text de preguntas
+- `?exam=<id>` - filtra preguntas por ID de examen
+- `?page=<n>` - paginación (5 por página)
+
+### NOTA: Recurso 'choices' no expuesto
+El router registra SOLO `exams` y `questions`. El modelo `Choice` NO está expuesto como recurso independiente (no hay `ChoiceViewSet`). Las opciones viajan ANIDADAS dentro de la pregunta.
+
+**PREGUNTA**: ¿Desea que agregue `choices` como recurso propio? Sería un cambio mínimo: agregar `ChoiceViewSet` en views.py y `router.register("choices", ChoiceViewSet)` en urls.py.
