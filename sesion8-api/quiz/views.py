@@ -2,8 +2,17 @@ from django.db.models import Count
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import filters, viewsets
 
-from .models import Exam, Question
-from .serializers import ExamSerializer, QuestionSerializer
+from .models import Choice, Exam, Question
+from .serializers import ChoiceSerializer, ExamSerializer, QuestionSerializer
+
+
+class ChoiceViewSet(viewsets.ModelViewSet):
+    serializer_class = ChoiceSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["text"]
+
+    def get_queryset(self):
+        return Choice.objects.select_related("question").order_by("id")
 
 
 class ExamViewSet(viewsets.ModelViewSet):

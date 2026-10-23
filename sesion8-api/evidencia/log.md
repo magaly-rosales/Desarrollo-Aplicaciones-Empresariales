@@ -274,4 +274,30 @@ Además de parámetros de consulta:
 ### NOTA: Recurso 'choices' no expuesto
 El router registra SOLO `exams` y `questions`. El modelo `Choice` NO está expuesto como recurso independiente (no hay `ChoiceViewSet`). Las opciones viajan ANIDADAS dentro de la pregunta.
 
-**PREGUNTA**: ¿Desea que agregue `choices` como recurso propio? Sería un cambio mínimo: agregar `ChoiceViewSet` en views.py y `router.register("choices", ChoiceViewSet)` en urls.py.
+## Paso 8 - Choices como tercer recurso del enrutador
+
+### Cambio realizado
+Se agregó `ChoiceViewSet` en `quiz/views.py` y `router.register("choices", ChoiceViewSet, basename="choice")` en `quiz/urls.py`.
+
+**ChoiceViewSet (quiz/views.py):**
+- Hereda de `viewsets.ModelViewSet` (CRUD completo)
+- `serializer_class = ChoiceSerializer`
+- `filter_backends = [filters.SearchFilter]`, `search_fields = ["text"]` - búsqueda por texto de la opción
+- `get_queryset()`: `Choice.objects.select_related("question").order_by("id")` - optimiza carga del question
+
+**Rutas generadas para choices:**
+| Método | Ruta | Acción |
+|--------|------|--------|
+| GET | /api/choices/ | listar |
+| POST | /api/choices/ | crear |
+| GET | /api/choices/{id}/ | detalle |
+| PUT | /api/choices/{id}/ | reemplazar |
+| PATCH | /api/choices/{id}/ | parcial |
+| DELETE | /api/choices/{id}/ | eliminar |
+
+### Evidencia real
+- `GET /api/` ahora incluye `"choices":"http://127.0.0.1:8000/api/choices/"`
+- `GET /api/choices/` devuelve `200 OK` con count=48, paginación (5 por página)
+- Cada choice muestra `id`, `text`, `is_correct`
+- Django tests: 15/15 OK
+- Newman: 14 requests, 30 assertions, 0 fallos
