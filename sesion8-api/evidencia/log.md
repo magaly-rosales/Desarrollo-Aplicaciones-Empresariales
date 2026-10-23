@@ -53,8 +53,8 @@ Listo: 2 exámenes, 8 preguntas.
 
 Tokens (solo para esta máquina; el de la persona es el que puede borrar):
   PowerShell:
-    $env:QUIZ_TOKEN_HUMANO = "f6ecbadb0e630f9eefd90c97d2c3b7cfd761fd0b"
-    $env:QUIZ_TOKEN_AGENTE = "0dbf72f7b499c9fc62acc6fd674a95ddb4e52641"
+    $env:QUIZ_TOKEN_HUMANO = "<TOKEN>"
+    $env:QUIZ_TOKEN_AGENTE = "<TOKEN>"
 ```
 NOTA: Los tokens se imprimen pero NO se guardan en archivos del repo.
 
