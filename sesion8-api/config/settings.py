@@ -11,8 +11,11 @@ DEBUG = True
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 
 INSTALLED_APPS = [
+    "django.contrib.staticfiles",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
@@ -21,7 +24,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -44,20 +51,21 @@ STATIC_URL = "static/"  # without it, the test server (LiveServerTestCase) answe
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "quiz" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
 REST_FRAMEWORK = {
     # Identity comes from a token in the Authorization header: no cookies, no sessions.
-    # Added SessionAuthentication + BasicAuthentication to enable the browsable API in browser.
-    # TokenAuthentication continues to work for programmatic API access.
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
@@ -72,6 +80,8 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 5,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+LOGIN_REDIRECT_URL = "/api/"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "API de cuestionarios",
