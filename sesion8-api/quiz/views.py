@@ -3,11 +3,11 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema
 from rest_framework import filters, viewsets
 
 from .models import Choice, Exam, Question
-from .serializers import ChoiceSerializer, ExamSerializer, QuestionSerializer
+from .serializers import ChoiceDetailSerializer, ChoiceSerializer, ExamSerializer, QuestionSerializer
 
 
 class ChoiceViewSet(viewsets.ModelViewSet):
-    serializer_class = ChoiceSerializer
+    serializer_class = ChoiceDetailSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["text"]
 

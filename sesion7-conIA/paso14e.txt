@@ -1,0 +1,17 @@
+﻿{
+  "status": "approval_required",
+  "plan": {
+    "action": "delete_comments_of_post",
+    "args": {
+      "post_id": 155
+    },
+    "details": {
+      "affected_comment_ids": [
+        256
+      ]
+    },
+    "plan_hash": "becf603494da"
+  }
+}
+
+No se aplic¾ nada. Si T┌ apruebas este plan, repite el comando con --approve becf603494da

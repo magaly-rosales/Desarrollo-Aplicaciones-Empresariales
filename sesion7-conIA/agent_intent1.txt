@@ -1,0 +1,17 @@
+﻿{
+  "status": "ok",
+  "untrusted_data": [
+    {
+      "author": "Beto Salas",
+      "total": 6
+    },
+    {
+      "author": "Ana Quispe",
+      "total": 6
+    },
+    {
+      "author": "Carla Rojas",
+      "total": 3
+    }
+  ]
+}

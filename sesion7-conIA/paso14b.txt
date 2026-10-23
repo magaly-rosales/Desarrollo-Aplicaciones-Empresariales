@@ -1,0 +1,18 @@
+﻿{
+  "status": "applied",
+  "plan": {
+    "action": "delete_comments_of_post",
+    "args": {
+      "post_id": 155
+    },
+    "details": {
+      "affected_comment_ids": [
+        248
+      ]
+    },
+    "plan_hash": "8a87ff1be3d0"
+  },
+  "result": {
+    "deleted": 1
+  }
+}

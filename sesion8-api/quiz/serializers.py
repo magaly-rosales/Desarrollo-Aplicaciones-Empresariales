@@ -10,6 +10,30 @@ class ChoiceSerializer(serializers.ModelSerializer):
         fields = ["id", "text", "is_correct"]
 
 
+class ChoiceDetailSerializer(serializers.ModelSerializer):
+    question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
+
+    class Meta:
+        model = Choice
+        fields = ["id", "question", "text", "is_correct"]
+        read_only_fields = ["id"]
+
+    def validate(self, data):
+        choice = data.get("is_correct", self.instance.is_correct if self.instance else False)
+        question = data.get("question", self.instance.question if self.instance else None)
+        if not question:
+            return data
+        if choice:
+            existing_correct = Choice.objects.filter(question=question, is_correct=True).exclude(
+                id=self.instance.id if self.instance else 0
+            )
+            if existing_correct.exists():
+                raise serializers.ValidationError(
+                    "Ya existe una opción correcta para esta pregunta. Al marcar esta como correcta, la anterior dejará de serlo."
+                )
+        return data
+
+
 class ExamSerializer(serializers.ModelSerializer):
     question_count = serializers.IntegerField(read_only=True)
 

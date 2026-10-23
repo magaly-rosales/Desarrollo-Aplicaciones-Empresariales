@@ -1,0 +1,702 @@
+﻿{
+  "info": {
+    "name": "Quiz API - GLAB-S08",
+    "_postman_id": "sesion8-quiz-api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección para la API de cuestionarios del laboratorio GLAB-S08. Alumna: Magaly Liz Rosales Porras."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "0dbf72f7b499c9fc62acc6fd674a95ddb4e52641",
+      "type": "string"
+    },
+    {
+      "key": "last_created_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "last_created_choice_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "choice_test_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Operaciones CRUD",
+      "item": [
+        {
+          "name": "1. GET Choices - Listar",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/choices/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "choices", ""]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.1 POST Choices - Crear opción",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/choices/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "choices", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"question\": 2, \"text\": \"opcion correcta nueva\", \"is_correct\": true}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 - ya existe opción correcta\", function () { pm.response.to.have.status(400); });",
+                  "var body = pm.response.json();",
+                  "console.log('Error ya existe correcta:', JSON.stringify(body, null, 2));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.2 POST Choices - Crear opción no correcta",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/choices/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "choices", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"question\": 2, \"text\": \"opcion no correcta nueva\", \"is_correct\": false}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "var body = pm.response.json();",
+                  "pm.collectionVariables.set(\"last_created_choice_id\", body.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.3 PATCH Choices - Modificar",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/choices/{{last_created_choice_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "choices", "{{last_created_choice_id}}", ""]
+            },
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"text\": \"opcion modificada sin cambiar correct\"}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.4 DELETE Choices - Eliminar",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/choices/{{last_created_choice_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "choices", "{{last_created_choice_id}}", ""]
+            },
+            "method": "DELETE",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.5 POST Choices - Intento de dos correctas (400)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/choices/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "choices", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"question\": 1, \"text\": \"opcion prueba\", \"is_correct\": false}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "var body = pm.response.json();",
+                  "pm.collectionVariables.set(\"choice_test_id\", body.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.6 PATCH Choices - Intentar marcar como correcta otra (400)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/choices/{{choice_test_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "choices", "{{choice_test_id}}", ""]
+            },
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"text\": \"opcion modificada\", \"is_correct\": true}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 - ya existe opción correcta\", function () { pm.response.to.have.status(400); });",
+                  "var body = pm.response.json();",
+                  "console.log('Error dos correctas:', JSON.stringify(body, null, 2));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. GET Questions - Listar",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. GET Questions - Detalle",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", "1"]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. POST Questions - Crear",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"exam\": 1, \"text\": \"Pregunta Postman test\", \"choices\": [{\"text\": \"Opción A\", \"is_correct\": true}, {\"text\": \"Opción B\", \"is_correct\": false}]}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "var body = pm.response.json();",
+                  "pm.collectionVariables.set(\"last_created_id\", body.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. PATCH Questions - Modificar",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/{{last_created_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", "{{last_created_id}}", ""]
+            },
+            "method": "PATCH",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"text\": \"Pregunta modificada por PATCH\"}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. DELETE Questions - Eliminar",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/{{last_created_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", "{{last_created_id}}", ""]
+            },
+            "method": "DELETE",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Errores y Validación",
+      "item": [
+        {
+          "name": "6. POST - Campo obligatorio ausente (400)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"text\": \"Sin exam ni choices\"}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "var body = pm.response.json();",
+                  "console.log('Error campos ausentes:', JSON.stringify(body, null, 2));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. POST - Tipo incorrecto (400)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"exam\": \"no_es_numero\", \"text\": \"Test tipo\", \"choices\": [{\"text\": \"A\", \"is_correct\": true}, {\"text\": \"B\", \"is_correct\": false}]}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "var body = pm.response.json();",
+                  "console.log('Error tipo:', JSON.stringify(body, null, 2));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. POST - Sin opción correcta (400)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"exam\": 1, \"text\": \"Sin correcta\", \"choices\": [{\"text\": \"A\", \"is_correct\": false}, {\"text\": \"B\", \"is_correct\": false}]}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "var body = pm.response.json();",
+                  "console.log('Error sin correcta:', JSON.stringify(body, null, 2));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. POST - Dos opciones correctas (400)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""]
+            },
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"exam\": 1, \"text\": \"Dos correctas\", \"choices\": [{\"text\": \"A\", \"is_correct\": true}, {\"text\": \"B\", \"is_correct\": true}]}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "var body = pm.response.json();",
+                  "console.log('Error dos correctas:', JSON.stringify(body, null, 2));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Filtro, Búsqueda y Paginación",
+      "item": [
+        {
+          "name": "10. Filtro por examen (?exam=1)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/?exam=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""],
+              "query": [{"key": "exam", "value": "1"}]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "var body = pm.response.json();",
+                  "pm.test(\"Has count\", function () { pm.expect(body).to.have.property('count'); });",
+                  "pm.test(\"Filter returns results\", function () { pm.expect(body.count).to.be.greaterThan(0); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. Búsqueda (?search=prefetch)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/?search=prefetch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""],
+              "query": [{"key": "search", "value": "prefetch"}]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "var body = pm.response.json();",
+                  "pm.test(\"Has count\", function () { pm.expect(body).to.have.property('count'); });",
+                  "console.log('Search prefetch count:', body.count);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Paginación (page=1)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/?page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""],
+              "query": [{"key": "page", "value": "1"}]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "var body = pm.response.json();",
+                  "pm.test(\"Has count\", function () { pm.expect(body).to.have.property('count'); });",
+                  "pm.test(\"Has next\", function () { pm.expect(body).to.have.property('next'); });",
+                  "pm.test(\"Has results\", function () { pm.expect(body).to.have.property('results'); });",
+                  "pm.test(\"Results array not empty\", function () { pm.expect(body.results.length).to.be.greaterThan(0); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Paginación - Página intermedia (?page=2)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/?page=2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""],
+              "query": [{"key": "page", "value": "2"}]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "var body = pm.response.json();",
+                  "pm.test(\"Has count\", function () { pm.expect(body).to.have.property('count'); });",
+                  "pm.test(\"Has next (not last page)\", function () { pm.expect(body.next).to.not.be.null; });",
+                  "pm.test(\"Has previous\", function () { pm.expect(body.previous).to.not.be.null; });",
+                  "pm.test(\"Has results\", function () { pm.expect(body).to.have.property('results'); });",
+                  "pm.test(\"Results array not empty\", function () { pm.expect(body.results.length).to.be.greaterThan(0); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "14. Paginación - Última página (next=null)",
+          "request": {
+            "url": {
+              "raw": "{{base_url}}/api/questions/?page=4",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions", ""],
+              "query": [{"key": "page", "value": "4"}]
+            },
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Token {{token}}"},
+              {"key": "Accept", "value": "application/json"}
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "var body = pm.response.json();",
+                  "pm.test(\"Has count\", function () { pm.expect(body).to.have.property('count'); });",
+                  "pm.test(\"Has no next (last page)\", function () { pm.expect(body.next).to.be.null; });",
+                  "pm.test(\"Has previous\", function () { pm.expect(body.previous).to.not.be.null; });",
+                  "pm.test(\"Has results\", function () { pm.expect(body).to.have.property('results'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
