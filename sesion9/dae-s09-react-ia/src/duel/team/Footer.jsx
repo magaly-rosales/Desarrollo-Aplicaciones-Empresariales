@@ -1,0 +1,14 @@
+// Task 2 · Props: contact = { address, phone, email }.
+export default function Footer({ contact }) {
+  return (
+    <footer>
+      <p>{contact.address}</p>
+      <p>
+        <a href={`tel:${contact.phone}`}>{contact.phone}</a>
+      </p>
+      <p>
+        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </p>
+    </footer>
+  );
+}
