@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import { rawMovies } from './data/rawMovies'
 import { adaptMovies } from './utils/movieAdapter'
 import { useDebounce } from './hooks/useDebounce'
+import PremieresSection from './components/PremieresSection/PremieresSection'
 import SearchBar from './components/SearchBar/SearchBar'
 import MovieList from './components/MovieList/MovieList'
 
@@ -31,6 +32,8 @@ function App() {
       <p className="muted" style={{ marginBottom: '1.5rem' }}>
         Comunicación entre componentes en React
       </p>
+
+      <PremieresSection />
 
       <SearchBar
         value={query}

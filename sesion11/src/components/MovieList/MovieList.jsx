@@ -1,15 +1,8 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useWindowSize } from '../../hooks/useWindowSize'
+import { getColumns } from '../../utils/getColumns'
 import MovieCard from '../MovieCard/MovieCard'
-
-// Decides how many cards fit per row based on the window width
-function getColumns(width) {
-  if (width < 500) return 1
-  if (width < 768) return 2
-  if (width < 1024) return 3
-  return 4
-}
 
 function MovieList({ movies }) {
   // Temporary: favorites live here for now (lifted to App in step 9)
