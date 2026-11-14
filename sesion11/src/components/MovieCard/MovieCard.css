@@ -1,0 +1,30 @@
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+}
+
+.movie-card:hover {
+  transform: translateY(-4px);
+}
+
+.movie-card img {
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  width: 100%;
+}
+
+.movie-card__body {
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.movie-card__body h3 {
+  font-size: 1.4rem;
+}
+
+.movie-card__body .muted {
+  font-size: 0.85rem;
+}
