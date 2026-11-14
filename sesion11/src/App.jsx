@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import { rawMovies } from './data/rawMovies'
 import { adaptMovies } from './utils/movieAdapter'
 import { useDebounce } from './hooks/useDebounce'
+import Header from './components/Header/Header'
 import PremieresSection from './components/PremieresSection/PremieresSection'
 import SearchBar from './components/SearchBar/SearchBar'
 import MovieList from './components/MovieList/MovieList'
@@ -14,6 +15,24 @@ function App() {
   // Shared by SearchBar and MovieList (siblings) -> lives in their common ancestor
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebounce(query, 400)
+
+  // Lifted state: Header (count) and MovieList (hearts) are siblings
+  const [favoriteIds, setFavoriteIds] = useState([])
+
+  const handleToggleFavorite = (movie) => {
+    const isFavorite = favoriteIds.includes(movie.id)
+
+    setFavoriteIds((prev) =>
+      isFavorite ? prev.filter((id) => id !== movie.id) : [...prev, movie.id]
+    )
+
+    // App decides how to notify; the card only reports the click
+    if (isFavorite) {
+      toast(`${movie.title} se quitó de favoritas`, { icon: '💔' })
+    } else {
+      toast.success(`${movie.title} se agregó a favoritas`)
+    }
+  }
 
   const filteredMovies = useMemo(() => {
     const term = debouncedQuery.trim().toLowerCase()
@@ -27,33 +46,37 @@ function App() {
   }, [debouncedQuery])
 
   return (
-    <main className="container section">
-      <h1>Cartelera Lab 11</h1>
-      <p className="muted" style={{ marginBottom: '1.5rem' }}>
-        Comunicación entre componentes en React
-      </p>
+    <>
+      {/* Header only receives the number, not the whole list */}
+      <Header favoritesCount={favoriteIds.length} />
 
-      <PremieresSection />
+      <main className="container section">
+        <PremieresSection />
 
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        isSearching={query !== debouncedQuery}
-      />
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          isSearching={query !== debouncedQuery}
+        />
 
-      <div className="flex between" style={{ marginBottom: '1rem' }}>
-        <h2>Cartelera</h2>
-        <span className="muted">{filteredMovies.length} películas</span>
-      </div>
+        <div className="flex between" style={{ marginBottom: '1rem' }}>
+          <h2>Cartelera</h2>
+          <span className="muted">{filteredMovies.length} películas</span>
+        </div>
 
-      <MovieList movies={filteredMovies} />
+        <MovieList
+          movies={filteredMovies}
+          favoriteIds={favoriteIds}
+          onToggleFavorite={handleToggleFavorite}
+        />
+      </main>
 
       {/* Global toast container */}
       <Toaster
         position="bottom-right"
         toastOptions={{ style: { background: '#252533', color: '#f1f1f5' } }}
       />
-    </main>
+    </>
   )
 }
 
