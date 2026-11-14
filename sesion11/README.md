@@ -1,16 +1,40 @@
-# React + Vite
+# Lab 11 – Comunicación entre componentes en ReactJS
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Árbol de componentes y dato que vive en cada nivel
 
-Currently, two official plugins are available:
+```
+App                      [estado: query, favoriteIds]  (usa useDebounce)
+├── Header               ← favoritesCount (solo el número)
+├── PremieresSection     [estado: simulateError]  (usa usePremieres, useWindowSize)
+│   ├── SkeletonCard ×N  (estado: cargando)
+│   └── PremiereCarousel [estado: start]  ← premieres  (usa useWindowSize)
+├── Banner               ← activeFilter, resultsCount, onClearFilter
+├── SearchBar            ← value, onChange, isSearching
+├── MovieList            ← movies, favoriteIds, onToggleFavorite  (usa useWindowSize)
+│   └── MovieCard ×N     ← movie, isFavorite, onToggleFavorite
+└── Toaster              (react-hot-toast)
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+`[ ]` = estado propio · `←` = props que recibe
 
-## React Compiler
+## Hooks propios
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Hook | Qué lógica extrae | Componentes que lo usan |
+|---|---|---|
+| `useDebounce` | Retrasa un valor hasta que deja de cambiar (400 ms) | App (buscador) |
+| `useWindowSize` | Escucha el `resize` de la ventana y limpia el listener | MovieList, PremiereCarousel, PremieresSection |
+| `usePremieres` | Petición simulada con 3 estados: cargando, datos y error | PremieresSection |
 
-## Expanding the Oxlint configuration
+## Utilidades
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- `movieAdapter.js`: patrón adaptador. Convierte los datos de la API (`original_title`, `vote_average`) al modelo de la app (`title`, `rating`). Lo usan la cartelera y `usePremieres`.
+- `getColumns.js`: regla compartida de columnas según el ancho.
+
+## ¿Por qué el contador de favoritas no puede vivir en Header?
+
+El contador no puede vivir en Header porque MovieList también lo necesita para marcar los corazones, y como son hermanos no pueden compartir datos directamente; por eso vive en App, su padre común, que le pasa a Header solo el número.
+
+## Comunicación entre hermanos
+
+- **Banner → SearchBar / MovieList:** el botón "Limpiar filtro" llama a `onClearFilter`, `App` vacía `query` y los dos hermanos se actualizan solos.
+- **MovieCard → Toaster:** la tarjeta solo llama a `onToggleFavorite`. `App` decide mostrar el aviso, así que la tarjeta no sabe cómo se muestra.
