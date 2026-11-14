@@ -5,6 +5,7 @@ import { adaptMovies } from './utils/movieAdapter'
 import { useDebounce } from './hooks/useDebounce'
 import Header from './components/Header/Header'
 import PremieresSection from './components/PremieresSection/PremieresSection'
+import Banner from './components/Banner/Banner'
 import SearchBar from './components/SearchBar/SearchBar'
 import MovieList from './components/MovieList/MovieList'
 
@@ -12,7 +13,7 @@ import MovieList from './components/MovieList/MovieList'
 const movies = adaptMovies(rawMovies)
 
 function App() {
-  // Shared by SearchBar and MovieList (siblings) -> lives in their common ancestor
+  // Shared by Banner, SearchBar and MovieList (siblings) -> lives in their common ancestor
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebounce(query, 400)
 
@@ -34,6 +35,9 @@ function App() {
     }
   }
 
+  // Called from the Banner; SearchBar and MovieList react automatically
+  const handleClearFilter = () => setQuery('')
+
   const filteredMovies = useMemo(() => {
     const term = debouncedQuery.trim().toLowerCase()
     if (!term) return movies
@@ -52,6 +56,12 @@ function App() {
 
       <main className="container section">
         <PremieresSection />
+
+        <Banner
+          activeFilter={debouncedQuery}
+          resultsCount={filteredMovies.length}
+          onClearFilter={handleClearFilter}
+        />
 
         <SearchBar
           value={query}
