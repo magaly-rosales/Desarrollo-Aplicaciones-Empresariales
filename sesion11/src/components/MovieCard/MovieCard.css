@@ -8,10 +8,37 @@
   transform: translateY(-4px);
 }
 
-.movie-card img {
+.movie-card__poster {
+  position: relative;
+}
+
+.movie-card__poster img {
   aspect-ratio: 2 / 3;
   object-fit: cover;
   width: 100%;
+}
+
+.fav-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 1.3rem;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.fav-btn:hover {
+  transform: scale(1.1);
+}
+
+.fav-btn--active {
+  background: #fff;
+  color: var(--primary);
 }
 
 .movie-card__body {

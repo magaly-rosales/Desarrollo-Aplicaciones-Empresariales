@@ -1,3 +1,4 @@
+import { Toaster } from 'react-hot-toast'
 import { rawMovies } from './data/rawMovies'
 import { adaptMovies } from './utils/movieAdapter'
 import MovieList from './components/MovieList/MovieList'
@@ -15,6 +16,12 @@ function App() {
 
       <h2>Cartelera</h2>
       <MovieList movies={movies} />
+
+      {/* Global toast container */}
+      <Toaster
+        position="bottom-right"
+        toastOptions={{ style: { background: '#252533', color: '#f1f1f5' } }}
+      />
     </main>
   )
 }
