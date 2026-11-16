@@ -1,14 +1,10 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const IDLE = { status: "idle", plan: null, result: null, error: null };
 
 export default function useAgentRun(runAgent) {
+  // FIX 4: every hook at the top level, before any condition
   const [run, setRun] = useState(IDLE);
-
-  if (!runAgent) {
-    return { ...IDLE, start: () => {}, approve: () => {}, reject: () => {} };
-  }
-
   const latest = useRef(IDLE);
   const controller = useRef(null);
 
@@ -17,8 +13,14 @@ export default function useAgentRun(runAgent) {
     setRun(next);
   };
 
+  // FIX 6: abort the run in progress when the component unmounts
+  useEffect(() => {
+    return () => controller.current?.abort();
+  }, []);
+
   const start = useCallback(
     (plan) => {
+      if (!runAgent) return; // FIX 4: the condition moves inside the function
       const { status } = latest.current;
       if (status === "running" || status === "awaiting_approval") return;
 
@@ -29,7 +31,9 @@ export default function useAgentRun(runAgent) {
       runAgent(plan, { signal: current.signal }).then(
         (result) => {
           if (current.signal.aborted) return;
-          update({ status: "done", plan, result, error: null });
+          // FIX 5: an R2 plan waits for approve() before reaching done
+          const next = plan.risk === "R2" ? "awaiting_approval" : "done";
+          update({ status: next, plan, result, error: null });
         },
         (error) => {
           if (current.signal.aborted) return;
