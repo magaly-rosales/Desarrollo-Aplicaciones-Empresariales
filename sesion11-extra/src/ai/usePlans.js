@@ -7,17 +7,29 @@ export default function usePlans(fetchPlans) {
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    // FIX 3: ignore the old response (race and unmount)
+    let cancelled = false;
+
     setPlans([]);
     setStatus("loading");
     setError(null);
     fetchPlans()
       .then((data) => {
+        if (cancelled) return;
         setPlans(data);
         setStatus("ready");
       })
       .catch((err) => {
-        console.error("Error loading plans", err);
+        if (cancelled) return;
+        // FIX 2: resolve the error state instead of only logging it
+        setPlans([]);
+        setError(err);
+        setStatus("error");
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [fetchPlans, attempt]);
 
   const reload = useCallback(() => setAttempt((n) => n + 1), []);
