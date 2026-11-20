@@ -137,9 +137,19 @@ class Cart:
 
     # --- checkout ---
     def checkout(self):
-        """TODO: empty cart -> CartError; stock is checked AGAIN (OutOfStock); on success the catalog stock
+        """empty cart -> CartError; stock is checked AGAIN (OutOfStock); on success the catalog stock
         goes down by what was bought, the cart is emptied and the summary of the order is returned."""
-        raise NotImplementedError("TODO: checkout")
+        if not self._qty:
+            raise CartError("Cannot checkout an empty cart")
+        for sku, qty in self._qty.items():
+            if qty > self._catalog[sku].stock:
+                raise OutOfStock(f"SKU {sku!r}: need {qty}, stock {self._catalog[sku].stock}")
+        for sku, qty in self._qty.items():
+            self._catalog[sku].stock -= qty
+        order_summary = self.summary()
+        self._qty.clear()
+        self._coupon = None
+        return order_summary
 
 
 def add_from_payload(cart, payload):
