@@ -1,0 +1,52 @@
+.carousel {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.carousel__track {
+  flex: 1;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+}
+
+.carousel__item img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+
+.carousel__info {
+  padding: 0.8rem;
+}
+
+.carousel__info h3 {
+  font-size: 1.3rem;
+}
+
+.carousel__info span {
+  font-size: 0.8rem;
+}
+
+.carousel__arrow {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 1.6rem;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.carousel__arrow:not(:disabled):hover {
+  background: var(--primary);
+}
+
+.carousel__arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

@@ -1,0 +1,44 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(15, 15, 20, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--surface-2);
+  padding-block: 1rem;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+}
+
+.header .muted {
+  font-size: 0.85rem;
+}
+
+.header__favorites {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+.header__heart {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.header__count {
+  background: var(--primary);
+  color: #fff;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+}

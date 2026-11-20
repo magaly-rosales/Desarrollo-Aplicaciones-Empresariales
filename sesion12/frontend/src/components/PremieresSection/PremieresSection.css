@@ -1,0 +1,44 @@
+.premieres {
+  margin-bottom: 2.5rem;
+}
+
+.premieres__header {
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.premieres__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.error-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 77, 79, 0.1);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+}
+
+.error-box__icon {
+  font-size: 2rem;
+}
+
+.error-box h3 {
+  color: var(--danger);
+  font-size: 1.4rem;
+}
+
+.error-box p {
+  font-size: 0.9rem;
+}
+
+.error-box button {
+  margin-left: auto;
+}
