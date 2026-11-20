@@ -82,6 +82,8 @@ class Cart:
     def apply_coupon(self, code):
         """code without spaces and in upper case; unknown -> InvalidCoupon. One coupon per cart:
         applying again (the same or another) REPLACES it."""
+        if not isinstance(code, str):
+            raise InvalidCoupon(f"coupon code must be a string, got {code!r}")
         normalized = code.strip().upper()
         if normalized not in COUPONS:
             raise InvalidCoupon(f"Unknown coupon {normalized!r}")
