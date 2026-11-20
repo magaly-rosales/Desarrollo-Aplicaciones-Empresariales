@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "sku": "PAD-01",
+      "qty": 4,
+      "unit_price": "8.45"
+    }
+  ],
+  "coupons": [],
+  "declared": {
+    "subtotal": "33.80",
+    "discount": "0.00",
+    "igv": "6.08",
+    "total": "39.88"
+  }
+}

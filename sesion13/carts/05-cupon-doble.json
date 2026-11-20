@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "sku": "KEY-01",
+      "qty": 1,
+      "unit_price": "189.00"
+    }
+  ],
+  "coupons": [
+    "BIENVENIDA10",
+    "BIENVENIDA10"
+  ],
+  "declared": {
+    "subtotal": "189.00",
+    "discount": "37.80",
+    "igv": "27.22",
+    "total": "178.42"
+  }
+}
