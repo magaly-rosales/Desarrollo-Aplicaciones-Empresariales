@@ -1,0 +1,44 @@
+.exam-page__header {
+  margin-bottom: 1rem;
+}
+
+.exam-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* The skeleton uses the same class: rows stacked with a gap */
+div.exam-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.exam-table th,
+.exam-table td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+}
+
+.exam-table th {
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exam-table tbody tr + tr td {
+  border-top: 1px solid var(--surface-2);
+}
+
+.exam-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem;
+  border-left: 4px solid var(--danger);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
