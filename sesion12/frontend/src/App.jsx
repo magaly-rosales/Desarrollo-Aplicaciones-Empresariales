@@ -1,4 +1,6 @@
+import { Route, Routes } from 'react-router-dom'
 import ExamListPage from './pages/ExamListPage/ExamListPage'
+import ExamFormPage from './pages/ExamFormPage/ExamFormPage'
 
 function App() {
   return (
@@ -7,7 +9,11 @@ function App() {
       <p className="muted" style={{ marginBottom: '2rem' }}>
         Servicios web: React + Axios consumiendo la API de Django
       </p>
-      <ExamListPage />
+
+      <Routes>
+        <Route path="/" element={<ExamListPage />} />
+        <Route path="/exams/new" element={<ExamFormPage />} />
+      </Routes>
     </main>
   )
 }

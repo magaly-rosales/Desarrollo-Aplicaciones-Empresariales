@@ -1,0 +1,32 @@
+.exam-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 520px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.exam-form label {
+  font-weight: 600;
+}
+
+.exam-form input {
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--surface-2);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.exam-form input:focus {
+  outline: 2px solid var(--primary);
+}
+
+.exam-form__error {
+  color: var(--danger);
+}
+
+.exam-form a.btn {
+  text-decoration: none;
+}

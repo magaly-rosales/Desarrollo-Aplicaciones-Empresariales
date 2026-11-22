@@ -42,3 +42,30 @@ div.exam-table {
   border-radius: var(--radius);
   background: var(--surface);
 }
+
+
+.exam-page__header a.btn {
+  text-decoration: none;
+}
+
+.exam-page__delete-error {
+  margin-bottom: 1rem;
+  color: var(--danger);
+}
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 0.35rem 0.9rem;
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
