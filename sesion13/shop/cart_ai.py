@@ -4,19 +4,14 @@ from decimal import Decimal
 from shop.domain import (
     COUPONS,
     CartError,
+    IGV_RATE,
     InvalidCoupon,
     InvalidQuantity,
     Line,
     OutOfStock,
     UnknownProduct,
+    money,
 )
-
-IGV = 0.18
-
-
-def _money(value):
-    return Decimal(str(round(value, 2)))
-
 
 def _check_qty(qty):
     if isinstance(qty, bool) or not isinstance(qty, int) or qty < 1:
@@ -81,31 +76,31 @@ class Cart:
         self._coupons.append(code)
 
     def _subtotal(self):
-        return sum(float(l.unit_price) * l.qty for l in self.lines())
+        return sum((l.unit_price * l.qty for l in self.lines()), Decimal("0"))
 
     def _discount(self):
         subtotal = self._subtotal()
-        total_discount = 0.0
+        total_discount = Decimal("0")
         for code in self._coupons:
             kind, amount = COUPONS[code]
             if kind == "percent":
-                total_discount += subtotal * float(amount) / 100
+                total_discount += subtotal * amount / Decimal("100")
             else:
-                total_discount += min(float(amount), subtotal)
+                total_discount += min(amount, subtotal)
         return total_discount
 
     def subtotal(self):
-        return _money(self._subtotal())
+        return money(self._subtotal())
 
     def discount(self):
-        return _money(self._discount())
+        return money(self._discount())
 
     def igv(self):
-        return _money((self._subtotal() - self._discount()) * IGV)
+        return money((self._subtotal() - self.discount()) * IGV_RATE)
 
     def total(self):
-        base = self._subtotal() - self._discount()
-        return _money(base) + self.igv()
+        base = self._subtotal() - self.discount()
+        return money(base) + self.igv()
 
     def summary(self):
         return {
