@@ -1,3 +1,19 @@
+// Names shown to the user for the fields the API validates
+const FIELD_LABELS = { title: 'Título' }
+
+// The API answers 400 with { field: ["message", ...] }: turn it into one sentence
+function getValidationMessage(data) {
+  if (typeof data !== 'object' || data === null) return null
+
+  const messages = Object.entries(data).flatMap(([field, value]) => {
+    const texts = Array.isArray(value) ? value : [String(value)]
+    const label = FIELD_LABELS[field]
+    return texts.map((text) => (label ? `${label}: ${text}` : text))
+  })
+
+  return messages.length > 0 ? messages.join(' ') : null
+}
+
 // Turns an Axios error into a message the user can act on.
 export function getErrorMessage(error) {
   // No response at all: server down, wrong address, or the browser blocked it (CORS)
@@ -7,6 +23,9 @@ export function getErrorMessage(error) {
 
   const { status, data } = error.response
 
+  if (status === 400) {
+    return getValidationMessage(data) ?? 'La API rechazó los datos enviados.'
+  }
   if (status === 401 || status === 403) {
     return 'No tienes permiso para esta operación. Revisa el token en .env.local.'
   }
