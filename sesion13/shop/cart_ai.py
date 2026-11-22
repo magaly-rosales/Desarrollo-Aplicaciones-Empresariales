@@ -13,6 +13,7 @@ from shop.domain import (
     money,
 )
 
+
 def _check_qty(qty):
     if isinstance(qty, bool) or not isinstance(qty, int) or qty < 1:
         raise InvalidQuantity(f"Cantidad no válida: {qty!r}")
@@ -22,22 +23,19 @@ class Cart:
     def __init__(self, catalog):
         self._catalog = catalog
         self._qty = {}
-        self._prices = {}
         self._coupons = []
 
     def to_state(self):
-        return {"qty": dict(self._qty), "prices": {k: str(v) for k, v in self._prices.items()},
-                "coupons": list(self._coupons)}
+        return {"qty": dict(self._qty), "coupons": list(self._coupons)}
 
     @classmethod
     def from_state(cls, catalog, state):
         cart = cls(catalog)
         cart._qty = {sku: int(q) for sku, q in state.get("qty", {}).items() if sku in catalog}
-        cart._prices = {k: Decimal(v) for k, v in state.get("prices", {}).items() if k in cart._qty}
         cart._coupons = list(state.get("coupons", []))
         return cart
 
-    def add(self, sku, qty=1, price=None):
+    def add(self, sku, qty=1):
         _check_qty(qty)
         product = self._catalog.get(sku)
         if product is None:
@@ -45,27 +43,24 @@ class Cart:
         if qty > product.stock:
             raise OutOfStock(f"{sku}: pides {qty} y quedan {product.stock}")
         self._qty[sku] = self._qty.get(sku, 0) + qty
-        self._prices[sku] = Decimal(str(price)) if price is not None else product.price
 
     def remove(self, sku, qty=None):
         if sku not in self._qty:
             raise UnknownProduct(f"{sku!r} no está en el carrito")
         if qty is None:
             del self._qty[sku]
-            del self._prices[sku]
             return
         _check_qty(qty)
         self._qty[sku] -= qty
         if self._qty[sku] == 0:
             del self._qty[sku]
-            del self._prices[sku]
 
     def qty_of(self, sku):
         return self._qty.get(sku, 0)
 
     def lines(self):
         return [
-            Line(sku, self._catalog[sku].name, self._prices[sku], qty)
+            Line(sku, self._catalog[sku].name, self._catalog[sku].price, qty)
             for sku, qty in self._qty.items()
         ]
 
@@ -123,7 +118,6 @@ class Cart:
         for sku, qty in self._qty.items():
             self._catalog[sku].stock -= qty
         self._qty = {}
-        self._prices = {}
         self._coupons = []
         return order
 
@@ -131,4 +125,4 @@ class Cart:
 def add_from_payload(cart, payload):
     if not isinstance(payload, dict) or not isinstance(payload.get("sku"), str):
         raise CartError("Falta el campo «sku»")
-    cart.add(payload["sku"], payload.get("qty", 1), payload.get("price"))
+    cart.add(payload["sku"], payload.get("qty", 1))
