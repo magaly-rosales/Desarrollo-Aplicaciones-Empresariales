@@ -68,7 +68,9 @@ class Cart:
         ]
 
     def apply_coupon(self, code):
-        code = (code or "").strip().upper()
+        if not isinstance(code, str):
+            raise InvalidCoupon(f"Cupón desconocido: {code!r}")
+        code = code.strip().upper()
         if code not in COUPONS:
             raise InvalidCoupon(f"Cupón desconocido: {code!r}")
         self._coupons = [code]
