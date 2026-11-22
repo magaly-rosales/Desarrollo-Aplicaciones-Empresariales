@@ -52,9 +52,11 @@ class Cart:
             del self._qty[sku]
             return
         _check_qty(qty)
-        self._qty[sku] -= qty
-        if self._qty[sku] == 0:
+        remaining_qty = self._qty[sku] - qty
+        if remaining_qty <= 0:
             del self._qty[sku]
+        else:
+            self._qty[sku] = remaining_qty
 
     def qty_of(self, sku):
         return self._qty.get(sku, 0)
