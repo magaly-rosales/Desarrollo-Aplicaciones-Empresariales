@@ -71,21 +71,19 @@ class Cart:
         code = (code or "").strip().upper()
         if code not in COUPONS:
             raise InvalidCoupon(f"Cupón desconocido: {code!r}")
-        self._coupons.append(code)
+        self._coupons = [code]
 
     def _subtotal(self):
         return sum((l.unit_price * l.qty for l in self.lines()), Decimal("0"))
 
     def _discount(self):
         subtotal = self._subtotal()
-        total_discount = Decimal("0")
-        for code in self._coupons:
-            kind, amount = COUPONS[code]
-            if kind == "percent":
-                total_discount += subtotal * amount / Decimal("100")
-            else:
-                total_discount += min(amount, subtotal)
-        return total_discount
+        if not self._coupons:
+            return Decimal("0")
+        kind, amount = COUPONS[self._coupons[-1]]
+        if kind == "percent":
+            return subtotal * amount / Decimal("100")
+        return min(amount, subtotal)
 
     def subtotal(self):
         return money(self._subtotal())
@@ -101,13 +99,14 @@ class Cart:
         return money(base) + self.igv()
 
     def summary(self):
+        coupon = self._coupons[-1] if self._coupons else None
         return {
             "lines": [
                 {"sku": l.sku, "name": l.name, "unit_price": f"{l.unit_price:.2f}", "qty": l.qty,
                  "line_total": f"{l.total:.2f}"}
                 for l in self.lines()
             ],
-            "coupon": self._coupons[-1] if self._coupons else None,
+            "coupon": coupon,
             "subtotal": f"{self.subtotal():.2f}",
             "discount": f"{self.discount():.2f}",
             "igv": f"{self.igv():.2f}",
