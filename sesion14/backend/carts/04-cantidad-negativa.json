@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "sku": "KEY-01",
+      "qty": 1,
+      "unit_price": "189.00"
+    },
+    {
+      "sku": "MOU-01",
+      "qty": -3,
+      "unit_price": "39.90"
+    }
+  ],
+  "coupons": [],
+  "declared": {
+    "subtotal": "69.30",
+    "discount": "0.00",
+    "igv": "12.47",
+    "total": "81.77"
+  }
+}

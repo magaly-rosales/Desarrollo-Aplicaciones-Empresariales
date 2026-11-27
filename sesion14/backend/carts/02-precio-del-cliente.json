@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "sku": "LAP-01",
+      "qty": 1,
+      "unit_price": "0.01"
+    },
+    {
+      "sku": "MOU-01",
+      "qty": 1,
+      "unit_price": "39.90"
+    }
+  ],
+  "coupons": [],
+  "declared": {
+    "subtotal": "39.91",
+    "discount": "0.00",
+    "igv": "7.18",
+    "total": "47.09"
+  }
+}

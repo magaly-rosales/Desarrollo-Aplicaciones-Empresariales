@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "sku": "PAD-01",
+      "qty": 1,
+      "unit_price": "8.45"
+    }
+  ],
+  "coupons": [
+    "BIENVENIDA10"
+  ],
+  "declared": {
+    "subtotal": "8.45",
+    "discount": "0.84",
+    "igv": "1.37",
+    "total": "8.97"
+  }
+}
